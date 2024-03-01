@@ -1,4 +1,16 @@
 # CEN3031-Spring24-Group5
 ## Hangman Game
 ### Introduction
-This will be a basic iteration of the game hangman. This is a student project made by a group of five students for our software engineering class. The game will randomly choose a word from a bank and gives the player a certain number of guesses to find letters within the word. Since this is still a work in progress there will be more features soon.
+This will be a basic iteration of the game hangman. This is a student project made by a group of four students for our software engineering class. The game will have more function later. 
+
+Right now, the game will start by asking for a word. This is the secret word that a player will try to guess. A second player could enter this word in order to preserve the challenge, but without a second player, this is more of a proof of concept.
+
+After picking the secret word, the player will be prompted to enter letters they want to find inside the secret word. Careful though, if you guess incorrectly six times, you lose the game.
+
+Wrong choices are represented by a stick figure drawing that gradually appears.
+
+The secret word is represented as dashes on the screen until a correct letter is filled in.
+
+The program ends when you either win or lose.
+
+Thanks for trying the demo.
