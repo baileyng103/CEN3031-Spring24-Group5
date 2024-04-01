@@ -5,6 +5,7 @@ import java.awt.event.*;
 public class HangmanMenu extends JFrame implements ActionListener {
     private JButton startButton;
     private JLabel titleLabel;
+    private HangmanGame hangmanGame;
 
     public HangmanMenu() {
         setTitle("Hangman Game");
@@ -31,13 +32,19 @@ public class HangmanMenu extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == startButton) {
-            // Start the Hangman game
-            HangmanGame game = new HangmanGame();
-            game.startGame();
-
-            // Close the menu window
-            dispose();
+            startGame();
         }
+    }
+
+    private void startGame() {
+        setTitle("Hangman Game");
+        getContentPane().removeAll();
+        hangmanGame = new HangmanGame();
+        add(hangmanGame);
+        validate();
+        repaint();
+        pack();
+        setLocationRelativeTo(null);
     }
 
     public static void main(String[] args) {
@@ -48,4 +55,3 @@ public class HangmanMenu extends JFrame implements ActionListener {
         });
     }
 }
-
