@@ -1,28 +1,21 @@
 import javax.swing.*;
+import javax.swing.Timer;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
 public class HangmanGame extends JPanel {
-    private StickFigure stickFigure;
-    private JLabel wordLabel;
-    private JLabel guessedLettersLabel;
-    private JButton[] letterButtons;
+    private HangmanGUI hangmanGUI;
     private String[] words;
     private char[] guessedWord;
     private String hiddenWord;
     private int attemptsLeft;
-    private int hangmanStage;
-    private JPanel keyboardPanel;
     private StringBuilder guessedLetters = new StringBuilder(); // Initialize the guessedLetters list
 
     public HangmanGame() {
         setLayout(new BorderLayout()); // Set BorderLayout for the main panel
-
-        // Initialize stick figure panel
-        stickFigure = new StickFigure();
-        add(stickFigure, BorderLayout.CENTER); // Add the StickFigure panel to the center
 
         // Load words from file
         loadWordsFromFile();
@@ -30,46 +23,21 @@ public class HangmanGame extends JPanel {
         // Initialize game
         initializeGame();
 
-        // Panel to hold the word label and guessed letters vertically
-        JPanel wordPanel = new JPanel();
-        wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.Y_AXIS));
-
-        // Word label to display the hidden word with underscores
-        wordLabel = new JLabel("Word: " + getSpacedWord(guessedWord), SwingConstants.CENTER);
-        wordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        wordPanel.add(wordLabel); // Add word label to the wordPanel
-
-        // Add a vertical gap between the word label and guessed letters label
-        wordPanel.add(Box.createVerticalStrut(10));
-
-        // Add guessed letters display
-        guessedLettersLabel = new JLabel("Guessed Letters: ", SwingConstants.CENTER);
-        guessedLettersLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        wordPanel.add(guessedLettersLabel); // Add guessed letters label to the wordPanel
-
-        // Add the wordPanel to the bottom of the main panel
-        add(wordPanel, BorderLayout.SOUTH);
-
-        // Panel to hold the letter buttons
-        keyboardPanel = new JPanel(new GridLayout(3, 9));
-        letterButtons = new JButton[26];
-
-        // Create and add letter buttons
-        for (char c = 'A'; c <= 'Z'; c++) {
-            int index = c - 'A';
-            letterButtons[index] = new JButton(String.valueOf(c));
-            letterButtons[index].setFont(new Font("Arial", Font.PLAIN, 16));
-            letterButtons[index].addActionListener(new LetterButtonListener());
-            keyboardPanel.add(letterButtons[index]);
-        }
-
-        add(keyboardPanel, BorderLayout.WEST); // Move the keyboard panel to the west
+        // Initialize HangmanGUI
+        hangmanGUI = new HangmanGUI(this);
+        add(hangmanGUI, BorderLayout.CENTER); // Add HangmanGUI panel to the center
 
         // Add exit button
         JButton exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        exitButton.setBackground(Color.RED);
+        exitButton.setForeground(Color.WHITE);
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                int confirmed = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit the game?", "Exit Confirmation", JOptionPane.YES_NO_OPTION);
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
             }
         });
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -89,7 +57,7 @@ public class HangmanGame extends JPanel {
         }
     }
 
-    private void initializeGame() {
+    public void initializeGame() {
         try {
             // Choose a random word from the words array
             Random rand = new Random();
@@ -100,10 +68,6 @@ public class HangmanGame extends JPanel {
             // Initialize attempts left
             attemptsLeft = 6;
 
-            // Initialize hangman stage
-            hangmanStage = 0;
-            stickFigure.setStage(hangmanStage);
-
             // Initialize guessed letters if it's null
             if (guessedLetters == null) {
                 guessedLetters = new StringBuilder();
@@ -111,30 +75,28 @@ public class HangmanGame extends JPanel {
                 // Clear guessed letters
                 guessedLetters.setLength(0);
             }
-            guessedLettersLabel.setText("Guessed Letters: ");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String getSpacedWord(char[] word) {
-        StringBuilder spacedWord = new StringBuilder();
-        for (char letter : word) {
-            spacedWord.append(letter).append(" "); // Add space after each character
-        }
-        return spacedWord.toString().trim(); // Trim to remove the trailing space
+    public String getHiddenWord() {
+        return hiddenWord;
     }
 
-    private class LetterButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            JButton button = (JButton) e.getSource();
-            String letter = button.getText();
-            // Process the clicked letter
-            checkLetter(letter.charAt(0));
-        }
+    public char[] getGuessedWord() {
+        return guessedWord;
     }
 
-    private void checkLetter(char letter) {
+    public StringBuilder getGuessedLetters() {
+        return guessedLetters;
+    }
+
+    public int getAttemptsLeft() {
+        return attemptsLeft;
+    }
+
+    public void checkLetter(char letter) {
         boolean found = false;
         for (int i = 0; i < hiddenWord.length(); i++) {
             if (hiddenWord.charAt(i) == letter) {
@@ -144,29 +106,30 @@ public class HangmanGame extends JPanel {
         }
         if (!found) {
             attemptsLeft--;
-            hangmanStage++;
-            stickFigure.setStage(hangmanStage);
             // Add guessed letter to display
             guessedLetters.append(letter).append(" ");
-            guessedLettersLabel.setText("Guessed Letters: " + guessedLetters.toString());
         }
-        if (attemptsLeft == 0) {
-            JOptionPane.showMessageDialog(this, "Game Over! The word was: " + hiddenWord);
-            resetGame();
-        } else if (!String.valueOf(guessedWord).contains("_")) {
-            JOptionPane.showMessageDialog(this, "You Win! The word was: " + hiddenWord);
-            resetGame();
+        if (attemptsLeft == 0 || !String.valueOf(guessedWord).contains("_")) {
+            boolean gameOver = attemptsLeft == 0;
+            Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    hangmanGUI.updateGameDisplay(); // Update the game display to fully populate the word label
+                    hangmanGUI.showEndGameMessage(gameOver); // Show end game message after delay
+                }
+            });
+            timer.setRepeats(false); // Execute the task only once
+            timer.start(); // Start the timer
+        } else {
+            hangmanGUI.updateGameDisplay();
         }
-        wordLabel.setText("Word: " + getSpacedWord(guessedWord)); // Update word label here
     }
 
-    private void resetGame() {
+    public void resetGame() {
         initializeGame();
-        stickFigure.reset(); // Reset the stick figure
-        for (JButton button : letterButtons) {
-            button.setEnabled(true);
-        }
-        wordLabel.setText("Word: " + getSpacedWord(guessedWord));
+        hangmanGUI.enableLetterButtons();
+        hangmanGUI.updateGameDisplay();
+        hangmanGUI.resetLetterButtons(); // Reset letter buttons appearance
     }
 
     public static void main(String[] args) {
