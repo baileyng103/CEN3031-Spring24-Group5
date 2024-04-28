@@ -1,18 +1,31 @@
-# CEN3031-Spring24-Group5
-## Hangman Game
-### Introduction
-This will be a basic iteration of the game hangman. This is a student project made by a group of four students for our software engineering class. The game will have more function later. 
+Hangman Game Application
+========================
 
-To start, simply run Demo.java
+This Hangman Game application is a simple word-guessing game developed using Java in Eclipse IDE. Players can guess letters to uncover a hidden word within a limited number of attempts.
 
-Right now, the game will begin by asking for a word. This is the secret word that a player will try to guess. A second player could enter this word in order to preserve the challenge, but without a second player, this is more of a proof of concept.
+How to Run
+----------
 
-After picking the secret word, the player will be prompted to enter letters they want to find inside the secret word. Careful though, if you guess incorrectly six times, you lose the game.
+1. Clone the Repository:
+- git clone https://github.com/baileyng103/CEN3031-Spring24-Group5
 
-Wrong choices are represented by a stick figure drawing that gradually appears.
+2. Open Eclipse IDE:
+- Launch Eclipse IDE on your computer.
 
-The secret word is represented as dashes on the screen until a correct letter is filled in.
+3. Import the Project:
+- In Eclipse, go to `File` > `Import`.
+- Select `General` > `Existing Projects into Workspace`.
+- Choose the root directory of the cloned project (`hangman-game`) and click `Finish`.
 
-The program ends when you either win or lose.
+4. Run the Application:
+- Locate the main Java file (`HangmanGame.java`) in the project structure.
+- Right-click on the file and select `Run As` > `Java Application`.
+- The Hangman Game will start running in the Eclipse console.
 
-Thanks for trying the demo.
+How to Play
+-----------
+
+- Once the game starts, a random word will be chosen as the target word.
+- Guess letters one at a time to uncover the hidden word.
+- You have a limited number of incorrect guesses before the game ends.
+- Try to guess the word correctly before using up all your attempts!
