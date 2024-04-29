@@ -9,6 +9,9 @@ public class HangmanGUI extends JPanel {
     private StickFigure stickFigure;
     private JLabel wordLabel;
     private JLabel guessesLeftLabel; // New label for displaying guesses left
+    private Menu menu;
+    private JButton playButton;
+    private JPanel playPanel;
 
     private JButton[] letterButtons;
     private JPanel keyboardPanel;
@@ -20,12 +23,17 @@ public class HangmanGUI extends JPanel {
         // Initialize stick figure panel
         stickFigure = new StickFigure();
         add(stickFigure, BorderLayout.CENTER); // Add the StickFigure panel to the center
+        
+        // Initialize Main Menu
+        menu = new Menu();
+        add(menu,BorderLayout.NORTH);
 
         // Panel to hold the word label and guesses left label vertically
         JPanel wordPanel = new JPanel();
         wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.Y_AXIS));
         wordPanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Double the padding
-
+        wordPanel.setVisible(false);
+        
         // Word label to display the hidden word with underscores
         wordLabel = new JLabel("Word: " + getSpacedWord(hangmanGame.getGuessedWord()), SwingConstants.CENTER);
         wordLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set font size and style
@@ -48,7 +56,7 @@ public class HangmanGUI extends JPanel {
         keyboardPanel = new JPanel(new GridLayout(3, 9));
         keyboardPanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Double the padding
         letterButtons = new JButton[26];
-
+        keyboardPanel.setVisible(false);
         // Create and add letter buttons
         for (char c = 'A'; c <= 'Z'; c++) {
             int index = c - 'A';
@@ -61,6 +69,23 @@ public class HangmanGUI extends JPanel {
         }
 
         add(keyboardPanel, BorderLayout.WEST); // Move the keyboard panel to the west
+        
+        // Add play button
+        JButton playButton = new JButton("Play");
+        playButton.setFont(new Font("Arial", Font.PLAIN, 24));
+        playButton.setSize(100, 100);
+        playButton.setBackground(Color.GREEN);
+        playButton.setForeground(Color.BLACK);
+        playButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	wordPanel.setVisible(true);
+            	keyboardPanel.setVisible(true);
+            	playButton.setVisible(false);
+            }
+        });
+        JPanel playPanel = new JPanel(new GridLayout(1,0));
+        playPanel.add(playButton);
+        add(playPanel, BorderLayout.EAST);
     }
 
     private String getSpacedWord(char[] word) {

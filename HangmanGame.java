@@ -1,22 +1,40 @@
 import javax.swing.*;
 import javax.swing.Timer;
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
 public class HangmanGame extends JPanel {
-    private HangmanGUI hangmanGUI;
+    protected static boolean setmainMenu;
+	private HangmanGUI hangmanGUI;
     private String[] words;
     private char[] guessedWord;
     private String hiddenWord;
     private int attemptsLeft;
     private StringBuilder guessedLetters = new StringBuilder(); // Initialize the guessedLetters list
+  public Menu menu;
+   
+  private static boolean mainMenu = true;
+  
+
+	 
+  
+  public static boolean getmainMenu() {
+  	return mainMenu;
+  }
+  public void setmainMenu() {
+	  mainMenu = false;
+  }
+
+    
+    
 
     public HangmanGame() {
         setLayout(new BorderLayout()); // Set BorderLayout for the main panel
-
+        
         // Load words from file
         loadWordsFromFile();
 
@@ -43,6 +61,7 @@ public class HangmanGame extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.add(exitButton);
         add(topPanel, BorderLayout.NORTH);
+        
     }
 
     private void loadWordsFromFile() {
@@ -137,8 +156,11 @@ public class HangmanGame extends JPanel {
             public void run() {
                 JFrame frame = new JFrame("Hangman Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(1024, 800);
+                frame.setBackground(Color.WHITE);
+                frame.setForeground(Color.WHITE);
                 frame.getContentPane().add(new HangmanGame());
-                frame.pack(); // Pack the components to fit the preferred size
+                //frame.pack(); // Pack the components to fit the preferred size, Created Problems with resizing.
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
             }
